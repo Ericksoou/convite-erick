@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>18 Anos do Erick</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  /* ============================================================
+     DESIGN TOKENS — Paleta Verde Pastel + Dourado
+  ============================================================ */
+  :root {
+    --verde-pastel: #A8C3A0;
+    --verde-claro: #DCE9D7;
+    --verde-fundo: #EFF5EC;
+    --dourado: #C9A45C;
+    --dourado-escuro: #A67C35;
+    --branco: #FFFFFF;
+    --cinza-claro: #F6F6F6;
+    --cinza-texto: #2F2F2F;
+    --cinza-suave: #7A7A7A;
+    --sombra: rgba(168, 195, 160, 0.15);
+    --sombra-dourada: rgba(201, 164, 92, 0.12);
+    --borda-radius: 14px;
+    --borda-radius-sm: 8px;
+    --borda-radius-lg: 22px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--verde-fundo);
+    color: var(--cinza-texto);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ============================================================
+     PÁGINAS / VIEWS
+  ============================================================ */
+  .view { display: none; min-height: 100vh; }
+  .view.active { display: block; }
+
+  /* ============================================================
+     PARTÍCULAS DECORATIVAS DE FUNDO
+  ============================================================ */
+  .bg-particles {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.06;
+    animation: float-particle 18s ease-in-out infinite;
+  }
+
+  .particle:nth-child(1)  { width:340px; height:340px; background:var(--dourado);      top:-80px;  left:-80px;  animation-delay: 0s; }
+  .particle:nth-child(2)  { width:260px; height:260px; background:var(--verde-pastel); top:30%;    right:-60px; animation-delay:-5s; }
+  .particle:nth-child(3)  { width:180px; height:180px; background:var(--dourado);      bottom:10%; left:10%;    animation-delay:-9s; }
+  .particle:nth-child(4)  { width:120px; height:120px; background:var(--verde-pastel); bottom:25%; right:15%;   animation-delay:-3s; }
+
+  @keyframes float-particle {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50%       { transform: translateY(-30px) scale(1.04); }
+  }
+
+  /* ============================================================
+     VIEW PRINCIPAL — CONVITE
+  ============================================================ */
+  #view-convite {
+    position: relative;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    padding: 60px 24px 80px;
+  }
+  #view-convite.active { display: flex; }
+
+  .convite-card {
+    position: relative;
+    background: var(--branco);
+    border-radius: var(--borda-radius-lg);
+    max-width: 560px;
+    width: 100%;
+    padding: 56px 48px 52px;
+    box-shadow: 0 4px 40px rgba(168,195,160,0.18), 0 1px 6px rgba(0,0,0,0.04);
+    border: 1px solid rgba(201,164,92,0.12);
+    z-index: 1;
+    animation: card-enter 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes card-enter {
+    from { opacity:0; transform: translateY(36px) scale(0.97); }
+    to   { opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  /* Linha decorativa dourada topo */
+  .convite-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--dourado), transparent);
+    border-radius: 0 0 4px 4px;
+  }
+
+  /* ---- Monograma / emblema ---- */
+  .emblem {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 32px;
+  }
+
+  .emblem-ring {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 1.5px solid var(--dourado);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: ring-glow 4s ease-in-out infinite;
+  }
+
+  @keyframes ring-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(201,164,92,0); }
+    50%       { box-shadow: 0 0 0 8px rgba(201,164,92,0.08); }
+  }
+
+  .emblem-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    color: var(--dourado);
+    line-height: 1;
+    letter-spacing: 2px;
+    user-select: none;
+  }
+
+  /* Easter egg: snitch dourada minúscula no anel */
+  .snitch {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 14px;
+    height: 14px;
+    background: var(--dourado);
+    border-radius: 50%;
+    opacity: 0.55;
+    animation: snitch-fly 6s ease-in-out infinite;
+  }
+  .snitch::before, .snitch::after {
+    content: '';
+    position: absolute;
+    top: 50%; 
+    width: 10px;
+    height: 4px;
+    background: rgba(201,164,92,0.4);
+    border-radius: 50%;
+    transform: translateY(-50%);
+  }
+  .snitch::before { right: 100%; margin-right: 1px; }
+  .snitch::after  { left:  100%; margin-left:  1px; }
+
+  @keyframes snitch-fly {
+    0%, 100% { transform: rotate(0deg) translateX(0); }
+    25%       { transform: rotate(15deg) translateX(3px); }
+    75%       { transform: rotate(-15deg) translateX(-3px); }
+  }
+
+  /* ---- Títulos ---- */
+  .convite-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(38px, 8vw, 54px);
+    font-weight: 600;
+    color: var(--cinza-texto);
+    text-align: center;
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+    margin-bottom: 6px;
+  }
+
+  .convite-title span {
+    color: var(--dourado);
+    font-style: italic;
+  }
+
+  .convite-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--cinza-suave);
+    text-align: center;
+    margin-bottom: 28px;
+    letter-spacing: 0.3px;
+  }
+
+  /* ---- Divisória dourada ---- */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 auto 28px;
+    width: 70%;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 0.5px;
+    background: linear-gradient(90deg, transparent, var(--dourado));
+  }
+  .divider::after {
+    background: linear-gradient(90deg, var(--dourado), transparent);
+  }
+
+  .divider-icon {
+    font-size: 13px;
+    color: var(--dourado);
+    opacity: 0.8;
+    user-select: none;
+  }
+
+  /* ---- Texto do convite ---- */
+  .convite-body {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--cinza-suave);
+    text-align: center;
+    margin-bottom: 28px;
+  }
+
+  .convite-destaque {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: var(--cinza-texto);
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 16px 20px;
+    border-left: 2px solid var(--dourado);
+    border-right: 2px solid var(--dourado);
+    background: var(--verde-claro);
+    border-radius: var(--borda-radius-sm);
+  }
+
+  /* ---- Info do evento ---- */
+  .evento-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(201,164,92,0.15);
+    border-radius: var(--borda-radius);
+    overflow: hidden;
+    margin-bottom: 36px;
+  }
+
+  .info-item {
+    background: var(--branco);
+    padding: 20px 14px;
+    text-align: center;
+    transition: background 0.2s;
+  }
+
+  .info-item:hover { background: var(--verde-claro); }
+
+  .info-label {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--verde-pastel);
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .info-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--cinza-texto);
+    line-height: 1.2;
+  }
+
+  .info-value.dourado { color: var(--dourado); }
+
+  /* ---- Botões principais ---- */
+  .btns-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 0;
+  }
+
+  .btn-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 18px 10px 16px;
+    background: var(--branco);
+    border: 1px solid rgba(168,195,160,0.5);
+    border-radius: var(--borda-radius);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-main::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--verde-claro);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-main:hover {
+    border-color: var(--dourado);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px var(--sombra-dourada);
+  }
+
+  .btn-main:hover::before { opacity: 1; }
+  .btn-main:active { transform: translateY(-1px) scale(0.98); }
+
+  .btn-icon {
+    position: relative;
+    z-index: 1;
+    font-size: 24px;
+    color: var(--verde-pastel);
+    transition: color 0.2s;
+  }
+
+  .btn-main:hover .btn-icon { color: var(--dourado); }
+
+  .btn-label {
+    position: relative;
+    z-index: 1;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--cinza-suave);
+    text-align: center;
+    line-height: 1.3;
+    transition: color 0.2s;
+  }
+
+  .btn-main:hover .btn-label { color: var(--cinza-texto); }
+
+  /* ---- Rodapé discret com easter eggs ---- */
+  .convite-footer {
+    margin-top: 36px;
+    padding-top: 20px;
+    border-top: 0.5px solid rgba(201,164,92,0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+  }
+
+  /* Easter eggs SVG minimalistas */
+  .easter-egg {
+    opacity: 0.2;
+    transition: opacity 0.3s;
+    cursor: default;
+  }
+  .easter-egg:hover { opacity: 0.5; }
+
+  /* ============================================================
+     HEADER DE NAVEGAÇÃO (páginas internas)
+  ============================================================ */
+  .page-header {
+    position: relative;
+    background: var(--branco);
+    border-bottom: 0.5px solid rgba(201,164,92,0.12);
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 10;
+  }
+
+  .btn-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: 1px solid rgba(168,195,160,0.4);
+    border-radius: 50px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--cinza-suave);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-back:hover {
+    border-color: var(--dourado);
+    color: var(--cinza-texto);
+    background: var(--verde-claro);
+  }
+
+  .header-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--cinza-texto);
+  }
+
+  .header-title span { color: var(--dourado); font-style: italic; }
+
+  /* ============================================================
+     VIEW PRESENTES
+  ============================================================ */
+  #view-presentes { background: var(--verde-fundo); }
+
+  .presentes-hero {
+    background: linear-gradient(135deg, var(--branco) 0%, var(--verde-claro) 100%);
+    padding: 48px 24px 40px;
+    text-align: center;
+    border-bottom: 0.5px solid rgba(201,164,92,0.15);
+  }
+
+  .presentes-hero h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 600;
+    color: var(--cinza-texto);
+    margin-bottom: 8px;
+  }
+
+  .presentes-hero h2 em { color: var(--dourado); }
+
+  .presentes-hero p {
+    font-size: 15px;
+    color: var(--cinza-suave);
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.65;
+    font-style: italic;
+  }
+
+  .presentes-body {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .categoria {
+    background: var(--branco);
+    border-radius: var(--borda-radius);
+    border: 1px solid rgba(168,195,160,0.25);
+    overflow: hidden;
+    box-shadow: 0 2px 16px rgba(168,195,160,0.08);
+    animation: card-enter 0.6s both;
+  }
+
+  .categoria-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px 24px;
+    background: var(--verde-claro);
+    border-bottom: 1px solid rgba(201,164,92,0.12);
+  }
+
+  .categoria-icon {
+    width: 42px;
+    height: 42px;
+    background: var(--branco);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: var(--dourado);
+    flex-shrink: 0;
+    border: 1px solid rgba(201,164,92,0.2);
+  }
+
+  .categoria-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--cinza-texto);
+  }
+
+  .categoria-body { padding: 24px; }
+
+  .presente-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    background: var(--verde-fundo);
+    border: 1px solid rgba(168,195,160,0.35);
+    border-radius: 50px;
+    font-size: 13px;
+    color: var(--cinza-texto);
+    transition: all 0.2s;
+  }
+
+  .tag:hover {
+    background: var(--verde-claro);
+    border-color: var(--dourado);
+    color: var(--dourado-escuro);
+  }
+
+  .tag-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--dourado);
+    flex-shrink: 0;
+  }
+
+  .subcategoria-label {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--verde-pastel);
+    margin-bottom: 10px;
+    margin-top: 18px;
+  }
+
+  .subcategoria-label:first-child { margin-top: 0; }
+
+  /* ============================================================
+     VIEW RSVP — CONFIRMAR PRESENÇA
+  ============================================================ */
+  #view-rsvp { background: var(--verde-fundo); }
+
+  .rsvp-hero {
+    background: var(--branco);
+    padding: 48px 24px 40px;
+    text-align: center;
+    border-bottom: 0.5px solid rgba(201,164,92,0.15);
+  }
+
+  .rsvp-hero h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    color: var(--cinza-texto);
+    margin-bottom: 8px;
+  }
+  .rsvp-hero h2 em { color: var(--dourado); }
+
+  .rsvp-hero p {
+    font-size: 15px;
+    color: var(--cinza-suave);
+    font-style: italic;
+  }
+
+  /* Contagem regressiva */
+  .countdown-section {
+    background: var(--cinza-texto);
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  .countdown-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--verde-pastel);
+    margin-bottom: 16px;
+  }
+
+  .countdown-grid {
+    display: flex;
+    justify-content: center;
+    gap: clamp(12px, 3vw, 28px);
+  }
+
+  .countdown-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .countdown-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(36px, 8vw, 56px);
+    font-weight: 600;
+    color: var(--dourado);
+    line-height: 1;
+    min-width: 2ch;
+  }
+
+  .countdown-unit {
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .countdown-sep {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 40px;
+    color: rgba(201,164,92,0.3);
+    line-height: 1;
+    align-self: flex-start;
+    margin-top: 6px;
+  }
+
+  /* Info cards evento */
+  .rsvp-info-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(201,164,92,0.1);
+    margin: 0;
+  }
+
+  .rsvp-info-card {
+    background: var(--branco);
+    padding: 20px 16px;
+    text-align: center;
+  }
+
+  .ric-icon { font-size: 22px; color: var(--verde-pastel); margin-bottom: 8px; }
+  .ric-label { font-size: 10px; letter-spacing: 1.2px; text-transform: uppercase; color: var(--cinza-suave); margin-bottom: 4px; }
+  .ric-value { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--cinza-texto); }
+
+  /* Formulário */
+  .rsvp-form-wrap {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .form-card {
+    background: var(--branco);
+    border-radius: var(--borda-radius);
+    border: 1px solid rgba(168,195,160,0.25);
+    padding: 36px 32px;
+    box-shadow: 0 2px 16px rgba(168,195,160,0.08);
+  }
+
+  .form-group { margin-bottom: 24px; }
+
+  .form-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: var(--cinza-suave);
+    margin-bottom: 8px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgba(168,195,160,0.4);
+    border-radius: var(--borda-radius-sm);
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--cinza-texto);
+    background: var(--branco);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    appearance: none;
+  }
+
+  .form-input:focus {
+    border-color: var(--dourado);
+    box-shadow: 0 0 0 3px rgba(201,164,92,0.08);
+  }
+
+  .form-input::placeholder { color: #bbb; }
+
+  /* Botões sim/não */
+  .presence-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .presence-btn {
+    padding: 16px 12px;
+    border: 1.5px solid transparent;
+    border-radius: var(--borda-radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    background: var(--cinza-claro);
+    color: var(--cinza-suave);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .presence-btn:hover { background: var(--verde-claro); border-color: var(--verde-pastel); color: var(--cinza-texto); }
+
+  .presence-btn.selected-yes {
+    background: var(--verde-claro);
+    border-color: var(--verde-pastel);
+    color: #3d6b35;
+  }
+
+  .presence-btn.selected-no {
+    background: #fdf1ef;
+    border-color: #dba8a1;
+    color: #8b4c45;
+  }
+
+  .form-input[type="number"] {
+    max-width: 160px;
+  }
+
+  .form-textarea {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgba(168,195,160,0.4);
+    border-radius: var(--borda-radius-sm);
+    font-size: 15px;
+    font-family: 'Inter', sans-serif;
+    color: var(--cinza-texto);
+    background: var(--branco);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none;
+    resize: vertical;
+    min-height: 100px;
+  }
+
+  .form-textarea:focus {
+    border-color: var(--dourado);
+    box-shadow: 0 0 0 3px rgba(201,164,92,0.08);
+  }
+
+  .prazo-aviso {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    background: rgba(201,164,92,0.07);
+    border-left: 3px solid var(--dourado);
+    border-radius: 0 var(--borda-radius-sm) var(--borda-radius-sm) 0;
+    margin-bottom: 24px;
+    font-size: 14px;
+    color: var(--cinza-texto);
+    line-height: 1.5;
+  }
+
+  .prazo-aviso-icon { color: var(--dourado); flex-shrink: 0; margin-top: 1px; font-size: 16px; }
+
+  .btn-submit {
+    width: 100%;
+    padding: 17px;
+    background: var(--cinza-texto);
+    color: var(--branco);
+    border: none;
+    border-radius: var(--borda-radius-sm);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    cursor: pointer;
+    transition: all 0.25s;
+    font-family: 'Inter', sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--dourado);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(47,47,47,0.2); }
+  .btn-submit:hover::before { opacity: 0.15; }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* Mensagem de sucesso */
+  .success-msg {
+    display: none;
+    text-align: center;
+    padding: 32px 0 0;
+  }
+  .success-msg.show { display: block; }
+
+  .success-icon { font-size: 48px; color: var(--verde-pastel); margin-bottom: 16px; }
+  .success-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: var(--cinza-texto); margin-bottom: 8px; }
+  .success-text { font-size: 15px; color: var(--cinza-suave); line-height: 1.6; }
+
+  /* ============================================================
+     VIEW ENDEREÇO
+  ============================================================ */
+  #view-endereco { background: var(--verde-fundo); }
+
+  .endereco-body {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .endereco-card {
+    background: var(--branco);
+    border-radius: var(--borda-radius);
+    border: 1px solid rgba(168,195,160,0.25);
+    padding: 32px;
+    box-shadow: 0 2px 16px rgba(168,195,160,0.08);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .endereco-icon-wrap {
+    width: 52px;
+    height: 52px;
+    background: var(--verde-claro);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: var(--dourado);
+    flex-shrink: 0;
+    border: 1px solid rgba(201,164,92,0.15);
+  }
+
+  .endereco-info h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    color: var(--cinza-texto);
+    margin-bottom: 6px;
+  }
+
+  .endereco-info p { font-size: 14px; color: var(--cinza-suave); line-height: 1.5; }
+
+  .mapa-embed {
+    border-radius: var(--borda-radius);
+    overflow: hidden;
+    border: 1px solid rgba(168,195,160,0.25);
+    box-shadow: 0 2px 16px rgba(168,195,160,0.08);
+  }
+
+  .mapa-embed iframe {
+    width: 100%;
+    height: 360px;
+    border: none;
+    display: block;
+  }
+
+  .btn-maps {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 28px;
+    background: var(--cinza-texto);
+    color: var(--branco);
+    border-radius: var(--borda-radius-sm);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-maps:hover {
+    background: var(--dourado);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(201,164,92,0.3);
+  }
+
+  .endereco-frase {
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 19px;
+    font-style: italic;
+    color: var(--cinza-suave);
+    padding: 8px 0;
+  }
+
+  /* ============================================================
+     VIEW ADMIN (área privada)
+  ============================================================ */
+  #view-admin { background: var(--cinza-claro); }
+
+  .admin-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 61px);
+    padding: 40px 24px;
+  }
+
+  .admin-login-card {
+    background: var(--branco);
+    border-radius: var(--borda-radius);
+    padding: 48px 40px;
+    max-width: 400px;
+    width: 100%;
+    border: 1px solid rgba(168,195,160,0.25);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.06);
+    text-align: center;
+  }
+
+  .admin-lock-icon {
+    font-size: 40px;
+    color: var(--dourado);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .admin-login-card h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    color: var(--cinza-texto);
+    margin-bottom: 6px;
+  }
+
+  .admin-login-card p {
+    font-size: 14px;
+    color: var(--cinza-suave);
+    margin-bottom: 28px;
+  }
+
+  .admin-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+  }
+
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-card {
+    background: var(--branco);
+    border-radius: var(--borda-radius);
+    padding: 22px 20px;
+    border: 1px solid rgba(168,195,160,0.2);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    text-align: center;
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 42px;
+    font-weight: 600;
+    color: var(--dourado);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-label { font-size: 12px; color: var(--cinza-suave); text-transform: uppercase; letter-spacing: 0.8px; }
+
+  .admin-table-wrap {
+    background: var(--branco);
+    border-radius: var(--borda-radius);
+    border: 1px solid rgba(168,195,160,0.2);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    margin-bottom: 20px;
+  }
+
+  .admin-table-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(201,164,92,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .admin-table-header h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    color: var(--cinza-texto);
+  }
+
+  .admin-export-btns { display: flex; gap: 8px; }
+
+  .btn-export {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border: 1px solid rgba(168,195,160,0.4);
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--cinza-texto);
+    background: var(--cinza-claro);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    text-decoration: none;
+  }
+
+  .btn-export:hover { border-color: var(--dourado); background: var(--verde-claro); color: var(--dourado-escuro); }
+
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .admin-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--cinza-suave);
+    background: var(--cinza-claro);
+    border-bottom: 1px solid rgba(201,164,92,0.08);
+  }
+
+  .admin-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(168,195,160,0.1);
+    color: var(--cinza-texto);
+    vertical-align: middle;
+  }
+
+  .admin-table tr:last-child td { border-bottom: none; }
+  .admin-table tr:hover td { background: var(--cinza-claro); }
+
+  .badge-sim {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(168,195,160,0.2);
+    color: #3d6b35;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .badge-nao {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(219, 168, 161, 0.2);
+    color: #8b4c45;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .admin-empty {
+    padding: 48px 24px;
+    text-align: center;
+    color: var(--cinza-suave);
+    font-style: italic;
+  }
+
+  /* Mensagem de erro login */
+  .login-error {
+    color: #c0392b;
+    font-size: 13px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  /* ============================================================
+     RESPONSIVO
+  ============================================================ */
+  @media (max-width: 600px) {
+    .convite-card { padding: 40px 24px 40px; }
+
+    .evento-info { grid-template-columns: 1fr; }
+    .info-item { padding: 16px; }
+
+    .btns-grid { grid-template-columns: 1fr; gap: 8px; }
+    .btn-main { flex-direction: row; padding: 16px 20px; }
+    .btn-icon { font-size: 20px; }
+
+    .rsvp-info-cards { grid-template-columns: 1fr; }
+
+    .form-card { padding: 28px 20px; }
+
+    .countdown-sep { display: none; }
+
+    .admin-content { padding: 24px 16px 60px; }
+
+    .admin-table th, .admin-table td { padding: 10px 12px; }
+
+    .endereco-card { flex-direction: column; gap: 14px; }
+
+    .presence-btns { grid-template-columns: 1fr; }
+  }
+
+  /* ============================================================
+     UTILITÁRIOS
+  ============================================================ */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Animação de entrada para categorias */
+  .categoria:nth-child(1) { animation-delay: 0.1s; }
+  .categoria:nth-child(2) { animation-delay: 0.2s; }
+  .categoria:nth-child(3) { animation-delay: 0.3s; }
+  .categoria:nth-child(4) { animation-delay: 0.4s; }
+  .categoria:nth-child(5) { animation-delay: 0.5s; }
+
+  /* Easter egg: bandeira F1 no rodapé */
+  .f1-flag {
+    width: 20px;
+    height: 14px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border-radius: 2px;
+    overflow: hidden;
+    opacity: 0.18;
+    transition: opacity 0.3s;
+    cursor: default;
+  }
+
+  .f1-flag:hover { opacity: 0.45; }
+
+  .f1-cell { width: 100%; height: 100%; }
+  .f1-cell.black { background: var(--cinza-texto); }
+  .f1-cell.white { background: white; border: 0.5px solid rgba(0,0,0,0.05); }
+
+  /* ============================================================
+     LINK ADMIN (escondido no rodapé)
+  ============================================================ */
+  .admin-link {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: rgba(168,195,160,0.5);
+    cursor: pointer;
+    border: 1px solid rgba(168,195,160,0.2);
+    transition: all 0.2s;
+    text-decoration: none;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+  }
+
+  .admin-link:hover {
+    background: var(--branco);
+    color: var(--dourado);
+    border-color: var(--dourado);
+    box-shadow: 0 4px 12px rgba(201,164,92,0.2);
+  }
+</style>
+</head>
+<body>
+
+<!-- Partículas de fundo decorativas -->
+<div class="bg-particles" aria-hidden="true">
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<!-- ============================================================
+     VIEW 1 — CONVITE PRINCIPAL
+============================================================ -->
+<section id="view-convite" class="view active" role="main" aria-label="Convite de aniversário">
+  <h1 class="visually-hidden">18 Anos do Erick — Convite Digital</h1>
+
+  <div class="convite-card">
+    <!-- Emblema / monograma -->
+    <div class="emblem" aria-hidden="true">
+      <div class="emblem-ring">
+        <span class="emblem-text">18</span>
+        <div class="snitch" title="✨"></div>
+      </div>
+    </div>
+
+    <!-- Títulos -->
+    <h2 class="convite-title">18 Anos de<br><span>Erick</span></h2>
+    <p class="convite-subtitle">Uma noite especial merece pessoas especiais.</p>
+
+    <div class="divider" aria-hidden="true">
+      <span class="divider-icon">◆</span>
+    </div>
+
+    <!-- Texto principal -->
+    <p class="convite-body">
+      Chegou a hora de celebrar um dos momentos mais importantes da minha vida.
+      Ficarei muito feliz em compartilhar essa conquista com pessoas que fizeram
+      parte da minha trajetória. A sua presença tornará essa noite ainda mais inesquecível.
+    </p>
+
+    <blockquote class="convite-destaque">
+      "Conto com você para tornar esse momento memorável."
+    </blockquote>
+
+    <!-- Informações do evento -->
+    <div class="evento-info" role="list" aria-label="Informações do evento">
+      <div class="info-item" role="listitem">
+        <div class="info-label">Data</div>
+        <div class="info-value">15 AGO<br>2026</div>
+      </div>
+      <div class="info-item" role="listitem">
+        <div class="info-label">Horário</div>
+        <div class="info-value dourado">19h00</div>
+      </div>
+      <div class="info-item" role="listitem">
+        <div class="info-label">Local</div>
+        <div class="info-value" style="font-size:14px; line-height:1.3">Cappele<br>Eventos</div>
+      </div>
+    </div>
+
+    <!-- Botões de navegação -->
+    <nav class="btns-grid" aria-label="Navegação do convite">
+      <button class="btn-main" onclick="irPara('presentes')" aria-label="Ver sugestão de presentes">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M20 12v10H4V12M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>
+        </svg>
+        <span class="btn-label">Sugestão de<br>Presentes</span>
+      </button>
+
+      <button class="btn-main" onclick="irPara('rsvp')" aria-label="Confirmar presença">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+        </svg>
+        <span class="btn-label">Confirmar<br>Presença</span>
+      </button>
+
+      <button class="btn-main" onclick="irPara('endereco')" aria-label="Ver endereço">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+          <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span class="btn-label">Endereço</span>
+      </button>
+    </nav>
+
+    <!-- Rodapé com easter eggs discretos -->
+    <div class="convite-footer" aria-hidden="true">
+      <!-- Easter egg: Bandeira F1 xadrez -->
+      <div class="f1-flag" title="🏁">
+        <div class="f1-cell black"></div><div class="f1-cell white"></div><div class="f1-cell black"></div><div class="f1-cell white"></div>
+        <div class="f1-cell white"></div><div class="f1-cell black"></div><div class="f1-cell white"></div><div class="f1-cell black"></div>
+        <div class="f1-cell black"></div><div class="f1-cell white"></div><div class="f1-cell black"></div><div class="f1-cell white"></div>
+      </div>
+
+      <!-- Easter egg: Varinha estilizada -->
+      <svg width="28" height="10" viewBox="0 0 28 10" class="easter-egg" title="🪄">
+        <line x1="0" y1="5" x2="22" y2="5" stroke="#2F2F2F" stroke-width="1.5"/>
+        <circle cx="24" cy="5" r="2.5" fill="#C9A45C" opacity="0.7"/>
+        <line x1="25" y1="2" x2="27" y2="0" stroke="#C9A45C" stroke-width="1"/>
+        <line x1="26" y1="5" x2="28" y2="4" stroke="#C9A45C" stroke-width="1"/>
+        <line x1="25" y1="8" x2="27" y2="10" stroke="#C9A45C" stroke-width="1"/>
+      </svg>
+
+      <!-- Easter egg: Estrela Marvel minimalista -->
+      <svg width="14" height="14" viewBox="0 0 24 24" class="easter-egg" title="⭐">
+        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="none" stroke="#2F2F2F" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     VIEW 2 — SUGESTÃO DE PRESENTES
+============================================================ -->
+<section id="view-presentes" class="view" role="main" aria-label="Sugestão de presentes">
+  <header class="page-header">
+    <button class="btn-back" onclick="irPara('convite')" aria-label="Voltar ao convite">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Voltar
+    </button>
+    <span class="header-title">18 Anos de <em>Erick</em></span>
+  </header>
+
+  <div class="presentes-hero">
+    <h2>Fica a <em>dica</em> 🎁</h2>
+    <p>Sua presença é o meu maior presente. Mas, caso queira me presentear, seguem algumas sugestões que combinam comigo.</p>
+  </div>
+
+  <div class="presentes-body">
+
+    <!-- Roupas -->
+    <div class="categoria">
+      <div class="categoria-header">
+        <div class="categoria-icon" aria-hidden="true">👕</div>
+        <h3 class="categoria-title">Roupas</h3>
+      </div>
+      <div class="categoria-body">
+        <div class="presente-tags">
+          <span class="tag"><span class="tag-dot"></span>Tamanho M</span>
+          <span class="tag"><span class="tag-dot"></span>Número 40</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calçados -->
+    <div class="categoria">
+      <div class="categoria-header">
+        <div class="categoria-icon" aria-hidden="true">👟</div>
+        <h3 class="categoria-title">Calçados</h3>
+      </div>
+      <div class="categoria-body">
+        <div class="presente-tags">
+          <span class="tag"><span class="tag-dot"></span>Número 40</span>
+          <span class="tag"><span class="tag-dot"></span>Número 41</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Livros -->
+    <div class="categoria">
+      <div class="categoria-header">
+        <div class="categoria-icon" aria-hidden="true">📚</div>
+        <h3 class="categoria-title">Livros</h3>
+      </div>
+      <div class="categoria-body">
+        <p class="subcategoria-label">Gêneros favoritos</p>
+        <div class="presente-tags">
+          <span class="tag"><span class="tag-dot"></span>Distopia</span>
+          <span class="tag"><span class="tag-dot"></span>Fantasia</span>
+          <span class="tag"><span class="tag-dot"></span>Thriller</span>
+          <span class="tag"><span class="tag-dot"></span>Ficção Científica</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Produtos Geek -->
+    <div class="categoria">
+      <div class="categoria-header">
+        <div class="categoria-icon" aria-hidden="true">🎮</div>
+        <h3 class="categoria-title">Produtos Geek</h3>
+      </div>
+      <div class="categoria-body">
+        <p class="subcategoria-label">Tipos</p>
+        <div class="presente-tags" style="margin-bottom: 16px">
+          <span class="tag"><span class="tag-dot"></span>Funko Pop</span>
+          <span class="tag"><span class="tag-dot"></span>Action Figures</span>
+          <span class="tag"><span class="tag-dot"></span>Colecionáveis</span>
+        </div>
+        <p class="subcategoria-label">Temáticas preferidas</p>
+        <div class="presente-tags">
+          <span class="tag"><span class="tag-dot"></span>Fórmula 1</span>
+          <span class="tag"><span class="tag-dot"></span>Harry Potter</span>
+          <span class="tag"><span class="tag-dot"></span>Marvel</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- LEGO -->
+    <div class="categoria">
+      <div class="categoria-header">
+        <div class="categoria-icon" aria-hidden="true">🧱</div>
+        <h3 class="categoria-title">LEGO</h3>
+      </div>
+      <div class="categoria-body">
+        <p class="subcategoria-label">Temáticas preferidas</p>
+        <div class="presente-tags">
+          <span class="tag"><span class="tag-dot"></span>Fórmula 1</span>
+          <span class="tag"><span class="tag-dot"></span>Harry Potter</span>
+          <span class="tag"><span class="tag-dot"></span>Marvel</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     VIEW 3 — CONFIRMAR PRESENÇA (RSVP)
+============================================================ -->
+<section id="view-rsvp" class="view" role="main" aria-label="Confirmar presença">
+  <header class="page-header">
+    <button class="btn-back" onclick="irPara('convite')" aria-label="Voltar ao convite">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Voltar
+    </button>
+    <span class="header-title">18 Anos de <em>Erick</em></span>
+  </header>
+
+  <div class="rsvp-hero">
+    <h2>Confirme sua <em>Presença</em></h2>
+    <p>Faça parte desta noite inesquecível.</p>
+  </div>
+
+  <!-- Contagem regressiva -->
+  <div class="countdown-section" aria-label="Contagem regressiva para o evento">
+    <p class="countdown-label">Faltam</p>
+    <div class="countdown-grid" role="timer">
+      <div class="countdown-block">
+        <span class="countdown-num" id="cd-dias">000</span>
+        <span class="countdown-unit">dias</span>
+      </div>
+      <span class="countdown-sep" aria-hidden="true">:</span>
+      <div class="countdown-block">
+        <span class="countdown-num" id="cd-horas">00</span>
+        <span class="countdown-unit">horas</span>
+      </div>
+      <span class="countdown-sep" aria-hidden="true">:</span>
+      <div class="countdown-block">
+        <span class="countdown-num" id="cd-min">00</span>
+        <span class="countdown-unit">min</span>
+      </div>
+      <span class="countdown-sep" aria-hidden="true">:</span>
+      <div class="countdown-block">
+        <span class="countdown-num" id="cd-seg">00</span>
+        <span class="countdown-unit">seg</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards info evento -->
+  <div class="rsvp-info-cards" role="list" aria-label="Dados do evento">
+    <div class="rsvp-info-card" role="listitem">
+      <div class="ric-icon" aria-hidden="true">📅</div>
+      <div class="ric-label">Data</div>
+      <div class="ric-value">15/08/2026</div>
+    </div>
+    <div class="rsvp-info-card" role="listitem">
+      <div class="ric-icon" aria-hidden="true">🕖</div>
+      <div class="ric-label">Horário</div>
+      <div class="ric-value">19:00</div>
+    </div>
+    <div class="rsvp-info-card" role="listitem">
+      <div class="ric-icon" aria-hidden="true">📍</div>
+      <div class="ric-label">Local</div>
+      <div class="ric-value">Cappele Eventos</div>
+    </div>
+  </div>
+
+  <!-- Formulário RSVP -->
+  <div class="rsvp-form-wrap">
+
+    <!-- Aviso prazo -->
+    <div class="prazo-aviso" role="alert">
+      <span class="prazo-aviso-icon" aria-hidden="true">⏰</span>
+      <span>Por favor, confirme sua presença até o dia <strong>01 de agosto de 2026</strong>.</span>
+    </div>
+
+    <div class="form-card">
+      <form id="form-rsvp" novalidate>
+
+        <!-- Nome -->
+        <div class="form-group">
+          <label class="form-label" for="rsvp-nome">Nome completo</label>
+          <input class="form-input" type="text" id="rsvp-nome" name="nome" placeholder="Como você se chama?" required autocomplete="name">
+        </div>
+
+        <!-- Presença -->
+        <div class="form-group">
+          <label class="form-label">Você irá comparecer?</label>
+          <div class="presence-btns" role="group" aria-label="Confirmação de presença">
+            <button type="button" class="presence-btn" id="btn-sim" onclick="selecionarPresenca('sim')" aria-pressed="false">
+              <span aria-hidden="true">✓</span> Sim, eu vou!
+            </button>
+            <button type="button" class="presence-btn" id="btn-nao" onclick="selecionarPresenca('nao')" aria-pressed="false">
+              <span aria-hidden="true">✕</span> Infelizmente não poderei ir
+            </button>
+          </div>
+        </div>
+
+        <!-- Acompanhantes -->
+        <div class="form-group" id="grupo-acompanhantes">
+          <label class="form-label" for="rsvp-acomp">Quantas pessoas da família convidada irão comparecer?</label>
+          <input class="form-input" type="number" id="rsvp-acomp" name="acompanhantes" min="1" max="20" value="1" style="max-width:160px">
+        </div>
+
+        <!-- Observações -->
+        <div class="form-group">
+          <label class="form-label" for="rsvp-obs">Observações <span style="font-size:11px;color:#bbb;font-style:italic;">(opcional)</span></label>
+          <textarea class="form-textarea" id="rsvp-obs" name="observacoes" placeholder="Algum recado para o aniversariante?"></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Confirmar minha presença</button>
+
+      </form>
+
+      <!-- Mensagem de sucesso -->
+      <div class="success-msg" id="success-msg" role="status" aria-live="polite">
+        <div class="success-icon" aria-hidden="true">✨</div>
+        <h3 class="success-title">Confirmação registrada!</h3>
+        <p class="success-text" id="success-text-content">
+          Obrigado por confirmar sua presença. Mal posso esperar para comemorar com você!
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     VIEW 4 — ENDEREÇO
+============================================================ -->
+<section id="view-endereco" class="view" role="main" aria-label="Endereço do evento">
+  <header class="page-header">
+    <button class="btn-back" onclick="irPara('convite')" aria-label="Voltar ao convite">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Voltar
+    </button>
+    <span class="header-title">18 Anos de <em>Erick</em></span>
+  </header>
+
+  <div class="endereco-body">
+
+    <div class="endereco-card">
+      <div class="endereco-icon-wrap" aria-hidden="true">📍</div>
+      <div class="endereco-info">
+        <h3>Cappele Espaço de Eventos</h3>
+        <p>Nosso espaço para uma noite inesquecível.<br>Venha celebrar conosco este momento tão especial.</p>
+      </div>
+    </div>
+
+    <div class="mapa-embed">
+      <iframe
+        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d-47.06!3d-22.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zQ2FwcGVsZSBFc3Bhw6dvIGRlIEV2ZW50b3M!5e0!3m2!1spt-BR!2sbr!4v1700000000000!5m2!1spt-BR!2sbr"
+        title="Mapa — Cappele Espaço de Eventos"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <a
+      href="https://maps.app.goo.gl/gXbqvz3zMcqbTaBaA"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn-maps"
+      aria-label="Abrir no Google Maps (abre em nova aba)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      Abrir no Google Maps
+    </a>
+
+    <p class="endereco-frase">
+      "Estamos ansiosos para recebê-lo nesta noite tão especial."
+    </p>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     VIEW 5 — ADMINISTRAÇÃO (ÁREA PRIVADA)
+============================================================ -->
+<section id="view-admin" class="view" role="main" aria-label="Área administrativa">
+  <header class="page-header">
+    <button class="btn-back" onclick="irPara('convite')" aria-label="Voltar ao convite">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Sair
+    </button>
+    <span class="header-title">Área <em>Administrativa</em></span>
+  </header>
+
+  <!-- Login -->
+  <div class="admin-login" id="admin-login-screen">
+    <div class="admin-login-card">
+      <span class="admin-lock-icon" aria-hidden="true">🔒</span>
+      <h2>Acesso Restrito</h2>
+      <p>Esta área é exclusiva para o aniversariante.</p>
+      <div class="form-group">
+        <label class="form-label" for="admin-senha">Senha</label>
+        <input class="form-input" type="password" id="admin-senha" placeholder="Digite a senha" autocomplete="current-password">
+        <p class="login-error" id="login-error" role="alert">Senha incorreta. Tente novamente.</p>
+      </div>
+      <button class="btn-submit" onclick="adminLogin()" style="margin-top:8px">Entrar</button>
+    </div>
+  </div>
+
+  <!-- Painel admin -->
+  <div class="admin-content" id="admin-painel" style="display:none">
+
+    <div class="admin-stats" role="list" aria-label="Estatísticas de confirmação">
+      <div class="stat-card" role="listitem">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-label">Total de respostas</div>
+      </div>
+      <div class="stat-card" role="listitem">
+        <div class="stat-num" id="stat-sim">0</div>
+        <div class="stat-label">Confirmações positivas</div>
+      </div>
+      <div class="stat-card" role="listitem">
+        <div class="stat-num" id="stat-nao">0</div>
+        <div class="stat-label">Confirmações negativas</div>
+      </div>
+      <div class="stat-card" role="listitem">
+        <div class="stat-num" id="stat-pessoas">0</div>
+        <div class="stat-label">Total estimado de pessoas</div>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap">
+      <div class="admin-table-header">
+        <h3>Lista de Confirmações</h3>
+        <div class="admin-export-btns">
+          <button class="btn-export" onclick="exportarCSV()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Exportar CSV
+          </button>
+          <button class="btn-export" onclick="imprimirRelatorio()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+            Imprimir / PDF
+          </button>
+        </div>
+      </div>
+
+      <div id="admin-table-body">
+        <div class="admin-empty">Nenhuma confirmação registrada ainda.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Botão admin oculto (discreto, canto inferior direito) -->
+<button class="admin-link" onclick="irPara('admin')" aria-label="Acesso administrativo (restrito)" title="Admin">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+</button>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+/* ==============================================================
+   CONVITE 18 ANOS DO ERICK — JavaScript
+   Integração com backend via API REST
+============================================================== */
+
+// URL base da API (em produção, altere para a URL do seu backend)
+const API_URL = (window.API_URL || '').replace(/\/$/, '');
+
+/* ==============================================================
+   ESTADO GLOBAL
+============================================================== */
+let presencaSelecionada = null;
+let contadorInterval    = null;
+
+/* ==============================================================
+   UTILITÁRIO — fetch com sessão
+============================================================== */
+async function apiFetch(endpoint, opts = {}) {
+  try {
+    const res = await fetch(API_URL + endpoint, {
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+      ...opts
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  } catch (err) {
+    console.error('Erro de rede:', err);
+    return { ok: false, status: 0, data: { erro: 'Erro de conexão com o servidor.' } };
+  }
+}
+
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ==============================================================
+   NAVEGAÇÃO ENTRE VIEWS
+============================================================== */
+function irPara(view) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const target = document.getElementById('view-' + view);
+  if (target) {
+    target.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  if (view === 'rsvp')  iniciarContagem();
+  if (view === 'admin') verificarSessaoAdmin();
+}
+
+/* ==============================================================
+   CONTAGEM REGRESSIVA
+============================================================== */
+function iniciarContagem() {
+  if (contadorInterval) clearInterval(contadorInterval);
+  const dataEvento = new Date('2026-08-15T19:00:00');
+
+  function atualizar() {
+    const diff = dataEvento - new Date();
+    if (diff <= 0) {
+      document.getElementById('cd-dias').textContent  = '000';
+      document.getElementById('cd-horas').textContent = '00';
+      document.getElementById('cd-min').textContent   = '00';
+      document.getElementById('cd-seg').textContent   = '00';
+      return;
+    }
+    const dias  = Math.floor(diff / 86400000);
+    const horas = Math.floor((diff % 86400000) / 3600000);
+    const min   = Math.floor((diff % 3600000) / 60000);
+    const seg   = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-dias').textContent  = String(dias).padStart(3, '0');
+    document.getElementById('cd-horas').textContent = String(horas).padStart(2, '0');
+    document.getElementById('cd-min').textContent   = String(min).padStart(2, '0');
+    document.getElementById('cd-seg').textContent   = String(seg).padStart(2, '0');
+  }
+  atualizar();
+  contadorInterval = setInterval(atualizar, 1000);
+}
+
+/* ==============================================================
+   SELEÇÃO DE PRESENÇA (Sim / Não)
+============================================================== */
+function selecionarPresenca(opcao) {
+  presencaSelecionada = opcao;
+  const btnSim = document.getElementById('btn-sim');
+  const btnNao = document.getElementById('btn-nao');
+  btnSim.classList.remove('selected-yes','selected-no');
+  btnNao.classList.remove('selected-yes','selected-no');
+  btnSim.setAttribute('aria-pressed','false');
+  btnNao.setAttribute('aria-pressed','false');
+  if (opcao === 'sim') {
+    btnSim.classList.add('selected-yes');
+    btnSim.setAttribute('aria-pressed','true');
+    document.getElementById('grupo-acompanhantes').style.display = 'block';
+  } else {
+    btnNao.classList.add('selected-no');
+    btnNao.setAttribute('aria-pressed','true');
+    document.getElementById('grupo-acompanhantes').style.display = 'none';
+  }
+}
+
+/* ==============================================================
+   FORMULÁRIO RSVP — envia para a API
+============================================================== */
+document.getElementById('form-rsvp').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const nome  = document.getElementById('rsvp-nome').value.trim();
+  const obs   = document.getElementById('rsvp-obs').value.trim();
+  const acomp = parseInt(document.getElementById('rsvp-acomp').value) || 1;
+
+  // Validações
+  if (!nome) {
+    const campo = document.getElementById('rsvp-nome');
+    campo.focus();
+    campo.style.borderColor = '#dba8a1';
+    campo.addEventListener('input', () => campo.style.borderColor = '', { once: true });
+    return;
+  }
+  if (!presencaSelecionada) {
+    document.getElementById('btn-sim').style.outline = '2px solid var(--dourado)';
+    setTimeout(() => document.getElementById('btn-sim').style.outline = '', 1500);
+    return;
+  }
+
+  // Loading
+  const btnSubmit = this.querySelector('button[type="submit"]');
+  const textoOriginal = btnSubmit.textContent;
+  btnSubmit.disabled    = true;
+  btnSubmit.textContent = 'Salvando...';
+
+  const { ok, data } = await apiFetch('/api/confirmacoes', {
+    method: 'POST',
+    body: JSON.stringify({
+      nome,
+      presenca:      presencaSelecionada,
+      acompanhantes: presencaSelecionada === 'sim' ? acomp : 0,
+      observacoes:   obs
+    })
+  });
+
+  btnSubmit.disabled    = false;
+  btnSubmit.textContent = textoOriginal;
+
+  if (!ok) {
+    alert(data.erro || 'Não foi possível salvar. Verifique sua conexão e tente novamente.');
+    return;
+  }
+
+  // Sucesso
+  this.style.display = 'none';
+  const successEl = document.getElementById('success-msg');
+  successEl.classList.add('show');
+  document.getElementById('success-text-content').textContent = presencaSelecionada === 'sim'
+    ? 'Obrigado por confirmar sua presença! Mal posso esperar para comemorar com você nessa noite especial. 🎉'
+    : 'Que pena que não poderá comparecer, mas obrigado por avisar. Sentirei muito a sua falta!';
+});
+
+/* ==============================================================
+   ÁREA ADMINISTRATIVA
+============================================================== */
+async function verificarSessaoAdmin() {
+  const { ok, data } = await apiFetch('/api/admin/session');
+  const autenticado  = ok && data.autenticado;
+
+  document.getElementById('admin-login-screen').style.display = autenticado ? 'none' : 'flex';
+  document.getElementById('admin-painel').style.display       = autenticado ? 'block' : 'none';
+
+  if (autenticado) carregarPainel();
+}
+
+async function adminLogin() {
+  const senhaInput = document.getElementById('admin-senha');
+  const erroEl     = document.getElementById('login-error');
+  const senha = senhaInput.value;
+  if (!senha) return;
+
+  const btn = document.querySelector('#admin-login-screen .btn-submit');
+  btn.disabled    = true;
+  btn.textContent = 'Verificando...';
+
+  const { ok, data } = await apiFetch('/api/admin/login', {
+    method: 'POST',
+    body: JSON.stringify({ senha })
+  });
+
+  btn.disabled    = false;
+  btn.textContent = 'Entrar';
+
+  if (ok) {
+    erroEl.style.display = 'none';
+    senhaInput.value = '';
+    verificarSessaoAdmin();
+  } else {
+    erroEl.style.display = 'block';
+    erroEl.textContent   = data.erro || 'Senha incorreta.';
+    senhaInput.value = '';
+    senhaInput.focus();
+  }
+}
+
+document.getElementById('admin-senha').addEventListener('keydown', e => {
+  if (e.key === 'Enter') adminLogin();
+});
+
+/* ==============================================================
+   PAINEL ADMIN — carrega dados via API
+============================================================== */
+async function carregarPainel() {
+  // Estatísticas
+  const { ok: okS, data: stats } = await apiFetch('/api/admin/estatisticas');
+  if (okS) {
+    document.getElementById('stat-total').textContent   = stats.total;
+    document.getElementById('stat-sim').textContent     = stats.sim;
+    document.getElementById('stat-nao').textContent     = stats.nao;
+    document.getElementById('stat-pessoas').textContent = stats.totalPessoas;
+  }
+
+  // Lista de confirmações
+  const wrap = document.getElementById('admin-table-body');
+  wrap.innerHTML = '<div class="admin-empty">Carregando confirmações...</div>';
+
+  const { ok, data: lista } = await apiFetch('/api/admin/confirmacoes');
+
+  if (!ok) {
+    wrap.innerHTML = '<div class="admin-empty">Erro ao carregar. Tente recarregar a página.</div>';
+    return;
+  }
+
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="admin-empty">Nenhuma confirmação registrada ainda.</div>';
+    return;
+  }
+
+  let html = `
+    <table class="admin-table" aria-label="Lista de confirmações">
+      <thead><tr>
+        <th>Nome</th><th>Presença</th><th>Pessoas</th><th>Observações</th><th>Registrado em</th>
+      </tr></thead><tbody>`;
+
+  lista.forEach(r => {
+    html += `<tr>
+      <td>${escapeHtml(r.nome)}</td>
+      <td><span class="${r.presenca==='sim'?'badge-sim':'badge-nao'}">${r.presenca==='sim'?'✓ Sim':'✕ Não'}</span></td>
+      <td>${r.acompanhantes || '—'}</td>
+      <td style="color:var(--cinza-suave);font-style:italic">${r.observacoes ? escapeHtml(r.observacoes) : '—'}</td>
+      <td style="font-size:12px;color:var(--cinza-suave)">${escapeHtml(r.criado_em)}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+}
+
+/* ==============================================================
+   EXPORTAÇÕES — abre aba com download via API
+============================================================== */
+function exportarCSV() {
+  window.open(API_URL + '/api/admin/exportar/csv', '_blank');
+}
+
+function imprimirRelatorio() {
+  window.open(API_URL + '/api/admin/exportar/pdf', '_blank');
+}
+
+/* ==============================================================
+   RESET DO FORMULÁRIO RSVP ao voltar para a view
+============================================================== */
+document.querySelectorAll('[onclick*="irPara"]').forEach(el => {
+  el.addEventListener('click', function() {
+    const m = this.getAttribute('onclick').match(/'([^']+)'/);
+    if (m && m[1] === 'rsvp') {
+      setTimeout(() => {
+        const form    = document.getElementById('form-rsvp');
+        const success = document.getElementById('success-msg');
+        form.style.display = 'block';
+        success.classList.remove('show');
+        form.reset();
+        presencaSelecionada = null;
+        document.getElementById('btn-sim').className = 'presence-btn';
+        document.getElementById('btn-nao').className = 'presence-btn';
+        document.getElementById('btn-sim').setAttribute('aria-pressed','false');
+        document.getElementById('btn-nao').setAttribute('aria-pressed','false');
+        document.getElementById('grupo-acompanhantes').style.display = 'block';
+      }, 50);
+    }
+  });
+});
+</script>
+
+</body>
+</html>
