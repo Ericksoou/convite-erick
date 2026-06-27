@@ -1,71 +1,86 @@
 /**
  * Convite 18 Anos do Erick — Backend
- * Stack: Express 4 + sql.js (SQLite puro JS) + bcryptjs
+ * Stack: Express 4 + Google Sheets (dados permanentes) + bcryptjs
  */
- 
+
 require('dotenv').config();
 const express   = require('express');
 const cors      = require('cors');
 const bcrypt    = require('bcryptjs');
 const session   = require('express-session');
 const path      = require('path');
-const fs        = require('fs');
-const initSqlJs = require('sql.js');
- 
+const { google } = require('googleapis');
+
 const app  = express();
 const PORT = process.env.PORT || 3001;
- 
-// ── Caminho do banco ────────────────────────────────────────────────────────────
-const DATA_DIR = path.join(__dirname, 'data');
-const DB_PATH  = path.join(DATA_DIR, 'convite.db');
-if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
- 
-let db;
- 
-async function initDB() {
-  const SQL = await initSqlJs();
- 
-  if (fs.existsSync(DB_PATH)) {
-    db = new SQL.Database(fs.readFileSync(DB_PATH));
-    console.log('✔ Banco carregado:', DB_PATH);
-  } else {
-    db = new SQL.Database();
-    console.log('✔ Banco novo criado:', DB_PATH);
+
+// ── Configuração Google Sheets ──────────────────────────────────────────────────
+const SHEET_ID   = process.env.SHEET_ID || '1tRW9Cd-v9ohLK0GhDuaPoM6uQ_6NZnJ6OEqdlJ4qZ_8';
+const SHEET_NAME = 'Página1';
+
+// Credenciais via variável de ambiente (JSON em string) ou arquivo local
+function getCredentials() {
+  if (process.env.GOOGLE_CREDENTIALS) {
+    return JSON.parse(process.env.GOOGLE_CREDENTIALS);
   }
- 
-  db.run(`CREATE TABLE IF NOT EXISTS confirmacoes (
-    id            INTEGER PRIMARY KEY AUTOINCREMENT,
-    nome          TEXT    NOT NULL,
-    presenca      TEXT    NOT NULL CHECK(presenca IN ('sim','nao')),
-    acompanhantes INTEGER DEFAULT 0,
-    observacoes   TEXT    DEFAULT '',
-    criado_em     TEXT    NOT NULL
-  )`);
- 
-  db.run(`CREATE TABLE IF NOT EXISTS admin_config (
-    chave TEXT PRIMARY KEY,
-    valor TEXT NOT NULL
-  )`);
- 
-  const res = db.exec("SELECT valor FROM admin_config WHERE chave='senha_hash'");
-  if (!res.length || !res[0].values.length) {
-    const plain = process.env.ADMIN_PASSWORD || 'erick18';
-    const hash  = bcrypt.hashSync(plain, 10);
-    db.run("INSERT OR REPLACE INTO admin_config(chave,valor) VALUES('senha_hash',?)", [hash]);
-    console.log(`✔ Senha admin definida (padrão: "${plain}")`);
+  // fallback local para desenvolvimento
+  try {
+    return require('./credentials.json');
+  } catch(e) {
+    throw new Error('Credenciais Google não encontradas. Configure GOOGLE_CREDENTIALS.');
   }
- 
-  salvar();
 }
- 
-function salvar() {
-  fs.writeFileSync(DB_PATH, Buffer.from(db.export()));
+
+async function getSheetsClient() {
+  const creds = getCredentials();
+  const auth = new google.auth.GoogleAuth({
+    credentials: creds,
+    scopes: ['https://www.googleapis.com/auth/spreadsheets']
+  });
+  return google.sheets({ version: 'v4', auth });
 }
- 
+
+// ── Funções da Planilha ─────────────────────────────────────────────────────────
+
+async function listarConfirmacoes() {
+  const sheets = await getSheetsClient();
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId: SHEET_ID,
+    range: `${SHEET_NAME}!A2:E1000`
+  });
+  const rows = res.data.values || [];
+  return rows.map((row, i) => ({
+    id:            i + 1,
+    nome:          row[0] || '',
+    presenca:      row[1] || '',
+    acompanhantes: row[2] || '0',
+    observacoes:   row[3] || '',
+    criado_em:     row[4] || ''
+  }));
+}
+
+async function nomejaCadastrado(nome) {
+  const lista = await listarConfirmacoes();
+  const nomeLimpo = nome.trim().toLowerCase();
+  return lista.some(r => r.nome.trim().toLowerCase() === nomeLimpo);
+}
+
+async function salvarConfirmacao({ nome, presenca, acompanhantes, observacoes }) {
+  const sheets  = await getSheetsClient();
+  const criadoEm = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+
+  await sheets.spreadsheets.values.append({
+    spreadsheetId: SHEET_ID,
+    range: `${SHEET_NAME}!A:E`,
+    valueInputOption: 'USER_ENTERED',
+    requestBody: {
+      values: [[nome, presenca === 'sim' ? 'Sim' : 'Não', acompanhantes, observacoes, criadoEm]]
+    }
+  });
+}
+
 // ── Middlewares ─────────────────────────────────────────────────────────────────
-// trust proxy necessário para cookies seguros atrás do proxy do Render
 app.set('trust proxy', 1);
- 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(session({
@@ -79,154 +94,137 @@ app.use(session({
     maxAge: 8 * 60 * 60 * 1000
   }
 }));
- 
-// Serve frontend estático
+
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
- 
+
 // ── Auth middleware ─────────────────────────────────────────────────────────────
 function requireAuth(req, res, next) {
   if (req.session && req.session.adminAutenticado) return next();
   res.status(401).json({ erro: 'Não autorizado.' });
 }
- 
+
+// Senha admin via bcrypt (hash gerado na inicialização)
+const ADMIN_HASH = bcrypt.hashSync(process.env.ADMIN_PASSWORD || 'erick18', 10);
+
 // ── ROTAS PÚBLICAS ──────────────────────────────────────────────────────────────
- 
-app.post('/api/confirmacoes', (req, res) => {
+
+// POST /api/confirmacoes
+app.post('/api/confirmacoes', async (req, res) => {
   try {
     const { nome, presenca, acompanhantes, observacoes } = req.body;
+
     if (!nome || !nome.trim())             return res.status(400).json({ erro: 'Nome é obrigatório.' });
     if (!['sim','nao'].includes(presenca)) return res.status(400).json({ erro: 'Presença inválida.' });
- 
-    const criadoEm = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+
+    // Verificar se já respondeu
+    const jaRespondeu = await nomejaCadastrado(nome.trim());
+    if (jaRespondeu) {
+      return res.status(409).json({
+        erro: 'duplicado',
+        mensagem: 'Você já confirmou sua presença anteriormente!'
+      });
+    }
+
     const acompNro = presenca === 'sim' ? (parseInt(acompanhantes) || 1) : 0;
- 
-    db.run(
-      `INSERT INTO confirmacoes(nome,presenca,acompanhantes,observacoes,criado_em) VALUES(?,?,?,?,?)`,
-      [nome.trim().substring(0,200), presenca, acompNro, (observacoes||'').trim().substring(0,1000), criadoEm]
-    );
-    salvar();
-    console.log(`✔ Confirmação: "${nome.trim()}" — ${presenca}`);
+
+    await salvarConfirmacao({
+      nome:          nome.trim().substring(0, 200),
+      presenca,
+      acompanhantes: acompNro,
+      observacoes:   (observacoes || '').trim().substring(0, 1000)
+    });
+
+    console.log(`✔ Confirmação salva: "${nome.trim()}" — ${presenca}`);
     res.status(201).json({ sucesso: true });
+
   } catch(e) {
-    console.error(e);
+    console.error('Erro ao salvar:', e.message);
     res.status(500).json({ erro: 'Erro ao salvar confirmação.' });
   }
 });
- 
+
 // ── ROTAS ADMIN ─────────────────────────────────────────────────────────────────
- 
+
 app.post('/api/admin/login', (req, res) => {
-  try {
-    const { senha } = req.body;
-    if (!senha) return res.status(400).json({ erro: 'Senha obrigatória.' });
- 
-    const r = db.exec("SELECT valor FROM admin_config WHERE chave='senha_hash'");
-    if (!r.length || !r[0].values.length) return res.status(500).json({ erro: 'Configuração ausente.' });
- 
-    if (!bcrypt.compareSync(senha, r[0].values[0][0]))
-      return res.status(401).json({ erro: 'Senha incorreta.' });
- 
-    req.session.adminAutenticado = true;
-    req.session.save(err => {
-      if (err) return res.status(500).json({ erro: 'Erro ao salvar sessão.' });
-      res.json({ sucesso: true });
-    });
-  } catch(e) {
-    console.error(e);
-    res.status(500).json({ erro: 'Erro interno.' });
-  }
+  const { senha } = req.body;
+  if (!senha) return res.status(400).json({ erro: 'Senha obrigatória.' });
+
+  if (!bcrypt.compareSync(senha, ADMIN_HASH))
+    return res.status(401).json({ erro: 'Senha incorreta.' });
+
+  req.session.adminAutenticado = true;
+  req.session.save(err => {
+    if (err) return res.status(500).json({ erro: 'Erro ao salvar sessão.' });
+    res.json({ sucesso: true });
+  });
 });
- 
+
 app.post('/api/admin/logout', (req, res) => {
   req.session.destroy(() => res.json({ sucesso: true }));
 });
- 
+
 app.get('/api/admin/session', (req, res) => {
   res.json({ autenticado: !!(req.session && req.session.adminAutenticado) });
 });
- 
-app.get('/api/admin/confirmacoes', requireAuth, (req, res) => {
+
+app.get('/api/admin/confirmacoes', requireAuth, async (req, res) => {
   try {
-    const r = db.exec(
-      `SELECT id,nome,presenca,acompanhantes,observacoes,criado_em FROM confirmacoes ORDER BY id DESC`
-    );
-    if (!r.length) return res.json([]);
-    const { columns, values } = r[0];
-    res.json(values.map(row => {
-      const o = {};
-      columns.forEach((c,i) => o[c] = row[i]);
-      return o;
-    }));
+    const lista = await listarConfirmacoes();
+    res.json(lista.reverse());
   } catch(e) {
-    console.error(e);
-    res.status(500).json({ erro: 'Erro interno.' });
+    console.error(e.message);
+    res.status(500).json({ erro: 'Erro ao buscar confirmações.' });
   }
 });
- 
-app.get('/api/admin/estatisticas', requireAuth, (req, res) => {
+
+app.get('/api/admin/estatisticas', requireAuth, async (req, res) => {
   try {
-    const v = k => db.exec(k)[0]?.values[0][0] || 0;
-    res.json({
-      total:        v('SELECT COUNT(*) FROM confirmacoes'),
-      sim:          v("SELECT COUNT(*) FROM confirmacoes WHERE presenca='sim'"),
-      nao:          v("SELECT COUNT(*) FROM confirmacoes WHERE presenca='nao'"),
-      totalPessoas: v("SELECT COALESCE(SUM(acompanhantes),0) FROM confirmacoes WHERE presenca='sim'")
-    });
+    const lista   = await listarConfirmacoes();
+    const sim     = lista.filter(r => r.presenca === 'Sim');
+    const nao     = lista.filter(r => r.presenca === 'Não');
+    const pessoas = sim.reduce((acc, r) => acc + (parseInt(r.acompanhantes) || 0), 0);
+    res.json({ total: lista.length, sim: sim.length, nao: nao.length, totalPessoas: pessoas });
   } catch(e) {
-    console.error(e);
-    res.status(500).json({ erro: 'Erro interno.' });
+    console.error(e.message);
+    res.status(500).json({ erro: 'Erro nas estatísticas.' });
   }
 });
- 
-app.get('/api/admin/exportar/csv', requireAuth, (req, res) => {
+
+app.get('/api/admin/exportar/csv', requireAuth, async (req, res) => {
   try {
-    const r = db.exec(
-      `SELECT nome,presenca,acompanhantes,observacoes,criado_em FROM confirmacoes ORDER BY id ASC`
-    );
-    let linhas = '';
-    if (r.length && r[0].values.length) {
-      linhas = r[0].values.map(row => {
-        const [nome,pres,acomp,obs,data] = row;
-        return [`"${(nome||'').replace(/"/g,'""')}"`,
-                pres==='sim'?'Sim':'Não', acomp||0,
-                `"${(obs||'').replace(/"/g,'""')}"`,
-                `"${(data||'').replace(/"/g,'""')}"`].join(';');
-      }).join('\n');
-    }
+    const lista = await listarConfirmacoes();
+    let linhas = lista.map(r =>
+      [`"${(r.nome||'').replace(/"/g,'""')}"`, r.presenca, r.acompanhantes,
+       `"${(r.observacoes||'').replace(/"/g,'""')}"`,
+       `"${(r.criado_em||'').replace(/"/g,'""')}"`].join(';')
+    ).join('\n');
     const csv = '\uFEFF' + 'Nome;Presença;Acompanhantes;Observações;Data e Hora\n' + linhas;
     res.setHeader('Content-Type','text/csv; charset=utf-8');
     res.setHeader('Content-Disposition','attachment; filename="confirmacoes_erick_18anos.csv"');
     res.send(csv);
   } catch(e) {
-    console.error(e);
-    res.status(500).json({ erro: 'Erro interno.' });
+    res.status(500).json({ erro: 'Erro ao exportar.' });
   }
 });
- 
-app.get('/api/admin/exportar/pdf', requireAuth, (req, res) => {
+
+app.get('/api/admin/exportar/pdf', requireAuth, async (req, res) => {
   try {
-    const v = k => db.exec(k)[0]?.values[0][0] || 0;
-    const total   = v('SELECT COUNT(*) FROM confirmacoes');
-    const sim     = v("SELECT COUNT(*) FROM confirmacoes WHERE presenca='sim'");
-    const nao     = v("SELECT COUNT(*) FROM confirmacoes WHERE presenca='nao'");
-    const pessoas = v("SELECT COALESCE(SUM(acompanhantes),0) FROM confirmacoes WHERE presenca='sim'");
- 
-    const r = db.exec(
-      `SELECT nome,presenca,acompanhantes,observacoes,criado_em FROM confirmacoes ORDER BY id ASC`
-    );
- 
+    const lista   = await listarConfirmacoes();
+    const sim     = lista.filter(r => r.presenca === 'Sim');
+    const nao     = lista.filter(r => r.presenca === 'Não');
+    const pessoas = sim.reduce((acc, r) => acc + (parseInt(r.acompanhantes) || 0), 0);
+
     const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const linhas = (r.length && r[0].values.length)
-      ? r[0].values.map((row,i) => {
-          const [nome,pres,acomp,obs,data] = row;
-          return `<tr style="background:${i%2===0?'#fff':'#f8fbf7'}">
-            <td>${esc(nome)}</td><td>${pres==='sim'?'✓ Sim':'✕ Não'}</td>
-            <td style="text-align:center">${acomp||'—'}</td>
-            <td style="font-style:italic;color:#777">${obs?esc(obs):'—'}</td>
-            <td style="font-size:12px;color:#999">${esc(data)}</td></tr>`;
-        }).join('')
+    const linhas = lista.length
+      ? lista.map((r,i) => `<tr style="background:${i%2===0?'#fff':'#f8fbf7'}">
+          <td>${esc(r.nome)}</td>
+          <td>${r.presenca==='Sim'?'✓ Sim':'✕ Não'}</td>
+          <td style="text-align:center">${r.acompanhantes||'—'}</td>
+          <td style="font-style:italic;color:#777">${r.observacoes?esc(r.observacoes):'—'}</td>
+          <td style="font-size:12px;color:#999">${esc(r.criado_em)}</td>
+        </tr>`).join('')
       : '<tr><td colspan="5" style="text-align:center;padding:24px;color:#999">Nenhuma confirmação</td></tr>';
- 
+
     res.setHeader('Content-Type','text/html; charset=utf-8');
     res.send(`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
 <title>Relatório — 18 Anos do Erick</title>
@@ -251,9 +249,9 @@ app.get('/api/admin/exportar/pdf', requireAuth, (req, res) => {
 <h1>18 Anos do Erick — Relatório de Presenças</h1>
 <p class="sub">Gerado em: ${new Date().toLocaleString('pt-BR',{timeZone:'America/Sao_Paulo'})}</p>
 <div class="stats">
-  <div class="stat"><div class="n">${total}</div><div class="l">Respostas</div></div>
-  <div class="stat"><div class="n">${sim}</div><div class="l">Confirmados</div></div>
-  <div class="stat"><div class="n">${nao}</div><div class="l">Ausências</div></div>
+  <div class="stat"><div class="n">${lista.length}</div><div class="l">Respostas</div></div>
+  <div class="stat"><div class="n">${sim.length}</div><div class="l">Confirmados</div></div>
+  <div class="stat"><div class="n">${nao.length}</div><div class="l">Ausências</div></div>
   <div class="stat"><div class="n">${pessoas}</div><div class="l">Total pessoas</div></div>
 </div>
 <table><thead><tr>
@@ -261,21 +259,18 @@ app.get('/api/admin/exportar/pdf', requireAuth, (req, res) => {
 </tr></thead><tbody>${linhas}</tbody></table>
 </body></html>`);
   } catch(e) {
-    console.error(e);
-    res.status(500).json({ erro: 'Erro interno.' });
+    res.status(500).json({ erro: 'Erro ao gerar PDF.' });
   }
 });
- 
+
 // Catch-all SPA
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
- 
+
 // ── Start ───────────────────────────────────────────────────────────────────────
-initDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`\n🚀 http://localhost:${PORT}`);
-    console.log(`🔐 Senha admin: ${process.env.ADMIN_PASSWORD || 'erick18'}\n`);
-  });
-}).catch(e => { console.error(e); process.exit(1); });
- 
+app.listen(PORT, () => {
+  console.log(`\n🚀 http://localhost:${PORT}`);
+  console.log(`🔐 Senha admin: ${process.env.ADMIN_PASSWORD || 'erick18'}`);
+  console.log(`📊 Planilha: https://docs.google.com/spreadsheets/d/${SHEET_ID}\n`);
+});
