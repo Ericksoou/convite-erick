@@ -1105,14 +1105,40 @@
      RESPONSIVO
   ============================================================ */
   @media (max-width: 600px) {
-    .convite-card { padding: 40px 24px 40px; }
+    .convite-card { padding: 36px 20px 36px; }
 
     .evento-info { grid-template-columns: 1fr; }
     .info-item { padding: 16px; }
 
-    .btns-grid { grid-template-columns: 1fr; gap: 8px; }
-    .btn-main { flex-direction: row; padding: 16px 20px; }
-    .btn-icon { font-size: 20px; }
+    /* Botões de navegação — grid 3 colunas mais compactas no mobile */
+    .btns-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .btn-main {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 8px 12px;
+      gap: 6px;
+      min-height: unset;
+    }
+
+    /* Ícone SVG com tamanho fixo no mobile */
+    .btn-icon {
+      font-size: 0;
+      width: 28px;
+      height: 28px;
+      flex-shrink: 0;
+    }
+
+    .btn-label {
+      font-size: 9px;
+      letter-spacing: 0.5px;
+      text-align: center;
+      line-height: 1.3;
+    }
 
     .rsvp-info-cards { grid-template-columns: 1fr; }
 
@@ -1266,21 +1292,21 @@
     <!-- Botões de navegação -->
     <nav class="btns-grid" aria-label="Navegação do convite">
       <button class="btn-main" onclick="irPara('presentes')" aria-label="Ver sugestão de presentes">
-        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" width="28" height="28">
           <path d="M20 12v10H4V12M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 010-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 000-5C13 2 12 7 12 7z"/>
         </svg>
         <span class="btn-label">Sugestão de<br>Presentes</span>
       </button>
 
       <button class="btn-main" onclick="irPara('rsvp')" aria-label="Confirmar presença">
-        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" width="28" height="28">
           <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
         </svg>
         <span class="btn-label">Confirmar<br>Presença</span>
       </button>
 
       <button class="btn-main" onclick="irPara('endereco')" aria-label="Ver endereço">
-        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" width="28" height="28">
           <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
         </svg>
         <span class="btn-label">Endereço</span>
