@@ -1922,7 +1922,7 @@ async function carregarPainel() {
   lista.forEach(r => {
     html += `<tr>
       <td>${escapeHtml(r.nome)}</td>
-      <td><span class="${r.presenca==='sim'?'badge-sim':'badge-nao'}">${r.presenca==='sim'?'✓ Sim':'✕ Não'}</span></td>
+      <td><span class="${r.presenca==='Sim'||r.presenca==='sim'?'badge-sim':'badge-nao'}">${r.presenca==='Sim'||r.presenca==='sim'?'✓ Sim':'✕ Não'}</span></td>
       <td>${r.acompanhantes || '—'}</td>
       <td style="color:var(--cinza-suave);font-style:italic">${r.observacoes ? escapeHtml(r.observacoes) : '—'}</td>
       <td style="font-size:12px;color:var(--cinza-suave)">${escapeHtml(r.criado_em)}</td>
